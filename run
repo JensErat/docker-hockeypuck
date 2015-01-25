@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ "$1" == "--init" ]; then
+	echo 'Initializing /srv...' >&2
+	if [ ! -d /srv/postgresql ]; then
+		echo 'Initializing /srv/postgresql' >&2
+		mkdir -p /srv/postgresql
+		chown postgres:postgres /srv/postgresql
+		cp -rp /var/lib/postgresql/9.1/main /srv/postgresql
+	fi
+	echo 'Finished initializing /srv.'
+elif [ "$1" == "--bash" ]; then
+	/bin/bash
+else
+	/etc/init.d/postgresql start || exit 1
+	su hockeypuck -c '/usr/bin/hockeypuck run --config /etc/hockeypuck/hockeypuck.conf'
+fi
